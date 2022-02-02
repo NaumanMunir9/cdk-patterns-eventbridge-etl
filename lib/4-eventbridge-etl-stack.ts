@@ -85,5 +85,12 @@ export class EventBridgeEtlStack extends Stack {
       streamPrefix: "eventbridge-etl", // The awslogs-stream-prefix option allows you to associate a log stream with the specified prefix, the container name, and the ID of the Amazon ECS task to which the container belongs
       logRetention: logs.RetentionDays.ONE_WEEK, // The number of days log events are kept in CloudWatch Logs when the log group is automatically created by this construct
     });
+
+    // ========================================================================
+    // Constructs a new instance of the Cluster class
+    // ========================================================================
+    const ecsCluster = new ecs.Cluster(this, "EcsCluster", {
+      vpc, // The VPC where your ECS instances will be running or your ENIs will be deployed
+    });
   }
 }

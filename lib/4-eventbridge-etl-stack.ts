@@ -258,5 +258,15 @@ export class EventBridgeEtlStack extends Stack {
         TABLE_NAME: dynamodbTable.tableName,
       },
     });
+
+    // ========================================================================
+    // Adds a statement to the IAM role assumed by the instance
+    // ========================================================================
+    loadLambda.addToRolePolicy(eventBridgeIamPolicyStatement);
+
+    // ========================================================================
+    // Permits an IAM principal to all data read/write operations to this table. BatchGetItem, GetRecords, GetShardIterator, Query, GetItem, Scan, BatchWriteItem, PutItem, UpdateItem, DeleteItem
+    // ========================================================================
+    dynamodbTable.grantReadWriteData(loadLambda);
   }
 }

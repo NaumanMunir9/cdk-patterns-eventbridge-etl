@@ -162,10 +162,22 @@ export class EventBridgeEtlStack extends Stack {
     // Adds a new event source mapping to the Lambda function
     // Adds an event source to this function
     // ========================================================================
-    extractLambda.addEventSource(new lambdaEventSources.SqsEventSource(sqsQueue)); // Use an Amazon SQS queue as an event source for AWS Lambda.
+    extractLambda.addEventSource(
+      new lambdaEventSources.SqsEventSource(sqsQueue)
+    ); // Use an Amazon SQS queue as an event source for AWS Lambda.
 
     // ========================================================================
     // Adds a statement to the IAM role assumed by the instance
     // ========================================================================
     extractLambda.addToRolePolicy(eventBridgeIamPolicyStatement);
+
+    // ========================================================================
+    // Represents a statement in an IAM policy document
+    // ========================================================================
+    const runTaskPolicyStatement = new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      actions: ["ecs:RunTask"],
+      resources: [ecsTaskDefinition.taskDefinitionArn],
+    });
+  }
 }

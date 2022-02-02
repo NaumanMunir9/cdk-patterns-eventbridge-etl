@@ -69,6 +69,11 @@ export class EventBridgeEtlStack extends Stack {
       resources: ["*"],
     });
 
+    /**
+     * Fargate is used here because it is the most performant way to run a lambda such that if you had a large file, you could stream the data to fargate for as long as you needed to before putting it into eventBridge or up the memory/storage to download the whole file.
+     * Lambda has limitations on runtime and memory/storage, so if you have a large file, you will need to use fargate.
+     */
+
     // ========================================================================
     // Vpc creates a VPC that spans a whole region. It will automatically divide the provided VPC CIDR range, and create public and private subnets per Availability Zone. Network routing for the public subnets will be configured to allow outbound access directly via an Internet Gateway. Network routing for the private subnets will be configured to allow outbound access via a set of resilient NAT Gateways (one per AZ).
     // vpc for the ECS cluster

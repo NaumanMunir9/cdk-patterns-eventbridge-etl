@@ -25,6 +25,7 @@ export class EventBridgeEtlStack extends Stack {
 
     // ========================================================================
     // Provides a DynamoDB table
+    // this is where our transformed data will be stored
     // ========================================================================
     const dynamodbTable = new dynamodb.Table(this, "DynamodbTable", {
       partitionKey: { name: "id", type: dynamodb.AttributeType.STRING },
@@ -36,15 +37,26 @@ export class EventBridgeEtlStack extends Stack {
 
     // ========================================================================
     // An S3 bucket with associated policy objects
+    // this is where the user uploads the file to be transformed
     // ========================================================================
     const s3Bucket = new s3.Bucket(this, "S3Bucket");
 
     // ========================================================================
     // A new Amazon SQS queue
+    // queue that listens for the S3 bucket events
     // ========================================================================
     const sqsQueue = new sqs.Queue(this, "SqsQueueS3Bucket", {
       queueName: "eventbridge-etl-queue",
       visibilityTimeout: cdk.Duration.seconds(300),
     });
+
+    // ========================================================================
+    // Adds a bucket notification event destination
+    // s3bucket event notification for the sqsQueue
+    // ========================================================================
+    s3Bucket.addEventNotification(
+      s3.EventType.OBJECT_CREATED, // Amazon S3 APIs such as PUT, POST, and COPY can create an object. Using these event types, you can enable notification when an object is created using a specific API, or you can use the s3:ObjectCreated:* event type to request notification regardless of the API that was used to create an object.
+      new s3Notifications.SqsDestination(sqsQueue) // Use an SQS queue as a bucket notification destination
+    );
   }
 }

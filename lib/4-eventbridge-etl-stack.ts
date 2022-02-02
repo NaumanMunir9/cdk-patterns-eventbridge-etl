@@ -33,5 +33,10 @@ export class EventBridgeEtlStack extends Stack {
       readCapacity: 1,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
+
+    // ========================================================================
+    // An S3 bucket with associated policy objects
+    // ========================================================================
+    const s3Bucket = new s3.Bucket(this, "S3Bucket");
   }
 }

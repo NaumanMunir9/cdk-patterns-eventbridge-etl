@@ -321,5 +321,12 @@ export class EventBridgeEtlStack extends Stack {
         },
       }
     );
+
+    // ========================================================================
+    // Adds a target to the rule. The abstract class RuleTarget can be extended to define new targets
+    // ========================================================================
+    observeLambdaEventBridgeRule.addTarget(
+      new eventsTargets.LambdaFunction(observeLambda) // Use an AWS Lambda function as an event rule target
+    );
   }
 }

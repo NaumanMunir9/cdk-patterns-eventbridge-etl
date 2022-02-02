@@ -68,5 +68,13 @@ export class EventBridgeEtlStack extends Stack {
       actions: ["events:PutEvents"],
       resources: ["*"],
     });
+
+    // ========================================================================
+    // Vpc creates a VPC that spans a whole region. It will automatically divide the provided VPC CIDR range, and create public and private subnets per Availability Zone. Network routing for the public subnets will be configured to allow outbound access directly via an Internet Gateway. Network routing for the private subnets will be configured to allow outbound access via a set of resilient NAT Gateways (one per AZ).
+    // vpc for the ECS cluster
+    // ========================================================================
+    const vpc = new ec2.Vpc(this, "Vpc", {
+      maxAzs: 2,
+    });
   }
 }

@@ -76,5 +76,14 @@ export class EventBridgeEtlStack extends Stack {
     const vpc = new ec2.Vpc(this, "Vpc", {
       maxAzs: 2,
     });
+
+    // ========================================================================
+    // A log driver that sends log information to CloudWatch Logs
+    // Creates a log driver configuration that sends log information to CloudWatch Logs
+    // ========================================================================
+    const ecsLogDriver = ecs.AwsLogDriver.awsLogs({
+      streamPrefix: "eventbridge-etl", // The awslogs-stream-prefix option allows you to associate a log stream with the specified prefix, the container name, and the ID of the Amazon ECS task to which the container belongs
+      logRetention: logs.RetentionDays.ONE_WEEK, // The number of days log events are kept in CloudWatch Logs when the log group is automatically created by this construct
+    });
   }
 }

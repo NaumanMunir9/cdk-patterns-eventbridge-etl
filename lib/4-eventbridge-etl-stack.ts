@@ -163,4 +163,9 @@ export class EventBridgeEtlStack extends Stack {
     // Adds an event source to this function
     // ========================================================================
     extractLambda.addEventSource(new lambdaEventSources.SqsEventSource(sqsQueue)); // Use an Amazon SQS queue as an event source for AWS Lambda.
+
+    // ========================================================================
+    // Adds a statement to the IAM role assumed by the instance
+    // ========================================================================
+    extractLambda.addToRolePolicy(eventBridgeIamPolicyStatement);
 }

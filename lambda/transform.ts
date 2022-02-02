@@ -1,52 +1,47 @@
 import * as AWS from "aws-sdk";
 
-AWS.config.update({ region: "us-east-1" });
+AWS.config.region = process.env.AWS_REGION || "us-east-1";
 
 const eventBridge = new AWS.EventBridge();
-const ecs = new AWS.ECS();
 
 export async function handler(event: any) {
-  console.log(`Requests: ${JSON.stringify(event, null, 2)}`);
+  console.log(`Received event: ${JSON.stringify(event)}`);
 
-  let records: any[] = event.Records;
+  const headers: string = event.details.headers;
+  const data: string = event.details.data;
 
-  // Extract variables from the environment
-  const clusterName = process.env.CLUSTER_NAME;
-  if (typeof clusterName == "undefined") {
-    throw new Error("CLUSTER_NAME is not defined");
+  let headersArray = headers.split(",");
+  let dataArray = data.split(",");
+  let transformedObject: any = {};
+
+  for (let i in headersArray) {
+    transformedObject[headersArray[i]] = dataArray[i];
   }
 
-  const taskDefinition = process.env.TASK_DEFINITION;
-  if (typeof taskDefinition == "undefined") {
-    throw new Error("TASK_DEFINITION is not defined");
-  }
-
-  const subnets = process.env.SUBNETS;
-  if (typeof subnets == "undefined") {
-    throw new Error("SUBNETS is not defined");
-  }
-
-  const containerName = process.env.CONTAINER_NAME;
-  if (typeof containerName == "undefined") {
-    throw new Error("CONTAINER_NAME is not defined");
-  }
-
-  console.log(`Cluster Name: ${clusterName}`);
-  console.log(`Task Definition: ${taskDefinition}`);
-  console.log(`Subnets: ${subnets}`);
-  console.log(`Container Name: ${containerName}`);
-
-  const params: any = {
-    cluster: clusterName,
-    taskDefinition: taskDefinition,
-    launchType: "FARGATE",
-    count: 1,
-    platformVersion: "LATEST",
-    networkConfiguration: {
-      awsvpcConfiguration: {
-        subnets: JSON.parse(subnets),
-        assignPublicIp: "DISABLED",
+  // transform event for event bridge
+  const eventBridgeParams: any = {
+    Entries: [
+      {
+        EventBusName: "default",
+        Source: "S3-Event-Bridge",
+        DetailType: "Transform",
+        Time: new Date(),
+        Detail: JSON.stringify({
+          status: "transformed",
+          data: transformedObject,
+        }),
       },
-    },
+    ],
   };
+
+  // Send the event to the Event Bridge
+  const eventBridgeResult = await eventBridge
+    .putEvents(eventBridgeParams)
+    .promise()
+    .catch((err) => {
+      throw new Error(err);
+    });
+  console.log(
+    `Event Bridge Response: ${JSON.stringify(eventBridgeResult, null, 2)}`
+  );
 }

@@ -1,6 +1,6 @@
 import * as AWS from "aws-sdk";
 
-AWS.config.update({ region: "us-east-1" });
+AWS.config.region = process.env.AWS_REGION || "us-east-1";
 
 const eventBridge = new AWS.EventBridge();
 const ecs = new AWS.ECS();

@@ -179,5 +179,14 @@ export class EventBridgeEtlStack extends Stack {
       actions: ["ecs:RunTask"],
       resources: [ecsTaskDefinition.taskDefinitionArn],
     });
+
+    // ========================================================================
+    // Adds a statement to the IAM role assumed by the instance.
+    // ========================================================================
+    extractLambda.addToRolePolicy(runTaskPolicyStatement);
+
+    // ========================================================================
+    // Adds a statement to the IAM role assumed by the instance.
+    // ========================================================================
   }
 }

@@ -22,5 +22,16 @@ export class EventBridgeEtlStack extends Stack {
     // Lambda Throttle size, if left unchecked, this pattern could "fan out" on the transform and load lambdas to the point that it consumes all the available resources on the account. this is wht we are limiting concurrency to 2 on all 3 lambdas.
     // ========================================================================
     const LAMBDA_THROTTLE_SIZE = 2;
+
+    // ========================================================================
+    // Provides a DynamoDB table
+    // ========================================================================
+    const dynamodbTable = new dynamodb.Table(this, "DynamodbTable", {
+      partitionKey: { name: "id", type: dynamodb.AttributeType.STRING },
+      tableName: "eventbridge-etl-table",
+      writeCapacity: 1,
+      readCapacity: 1,
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+    });
   }
 }

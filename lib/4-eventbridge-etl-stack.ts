@@ -114,5 +114,10 @@ export class EventBridgeEtlStack extends Stack {
     // Adds a policy statement to the task IAM role.
     // ========================================================================
     ecsTaskDefinition.addToTaskRolePolicy(eventBridgeIamPolicyStatement);
+
+    // ========================================================================
+    // Grant read permissions for this bucket and it's contents to an IAM principal (Role/Group/User).
+    // ========================================================================
+    s3Bucket.grantRead(ecsTaskDefinition.taskRole);
   }
 }

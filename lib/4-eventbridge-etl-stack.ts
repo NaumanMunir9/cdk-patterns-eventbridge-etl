@@ -186,7 +186,14 @@ export class EventBridgeEtlStack extends Stack {
     extractLambda.addToRolePolicy(runTaskPolicyStatement);
 
     // ========================================================================
-    // Adds a statement to the IAM role assumed by the instance.
+    // Represents a statement in an IAM policy document
     // ========================================================================
+    const taskExecutionRolePolicyStatement = new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      actions: ["iam:PassRole"],
+      resources: [
+        ecsTaskDefinition.obtainExecutionRole().roleArn,
+        ecsTaskDefinition.taskRole.roleArn,
+      ],
   }
 }

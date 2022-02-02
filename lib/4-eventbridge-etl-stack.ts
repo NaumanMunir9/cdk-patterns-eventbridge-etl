@@ -92,5 +92,17 @@ export class EventBridgeEtlStack extends Stack {
     const ecsCluster = new ecs.Cluster(this, "EcsCluster", {
       vpc, // The VPC where your ECS instances will be running or your ENIs will be deployed
     });
+
+    // ========================================================================
+    // Constructs a new instance of the FargateTaskDefinition class.
+    // ========================================================================
+    const ecsTaskDefinition = new ecs.FargateTaskDefinition(
+      this,
+      "EcsTaskDefinition",
+      {
+        cpu: 256, // The number of vCPUs to reserve for the container
+        memoryLimitMiB: 512, // The amount (in MiB) of memory to reserve for the container
+      }
+    );
   }
 }

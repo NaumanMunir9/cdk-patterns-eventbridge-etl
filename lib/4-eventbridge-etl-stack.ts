@@ -243,5 +243,20 @@ export class EventBridgeEtlStack extends Stack {
     transformEventBridgeRule.addTarget(
       new eventsTargets.LambdaFunction(transformLambda) // Use an AWS Lambda function as an event rule target
     );
+
+    // ========================================================================
+    // Deploys a file from inside the construct library as a function
+    // ========================================================================
+    const loadLambda = new lambda.Function(this, "LoadLambda", {
+      code: lambda.Code.fromAsset("lambda"), // The source code of your Lambda function.
+      handler: "load.handler", // The name of the function (within your source code) that Lambda calls to start running your code.
+      runtime: lambda.Runtime.NODEJS_14_X, // The runtime environment for the Lambda function that you are uploading.
+      reservedConcurrentExecutions: LAMBDA_THROTTLE_SIZE, // The number of simultaneous executions of your function that can be run without the function consuming the reserved concurrent execution units.
+      timeout: cdk.Duration.seconds(3), // The function execution time (in seconds) after which Lambda terminates it.
+      environment: {
+        // The environment variables that your Lambda function is given.
+        TABLE_NAME: dynamodbTable.tableName,
+      },
+    });
   }
 }

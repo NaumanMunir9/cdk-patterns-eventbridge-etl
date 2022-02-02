@@ -119,5 +119,19 @@ export class EventBridgeEtlStack extends Stack {
     // Grant read permissions for this bucket and it's contents to an IAM principal (Role/Group/User).
     // ========================================================================
     s3Bucket.grantRead(ecsTaskDefinition.taskRole);
+
+    // ========================================================================
+    // Adds a new container to the task definition
+    // ========================================================================
+    let container = ecsTaskDefinition.addContainer("EcsContainer", {
+      image: ecs.ContainerImage.fromAsset("container/s3DataExtractionTasks"), // The image used to start a container.
+      logging: ecsLogDriver, // The log driver to use for the container.
+      environment: {
+        // The environment variables to pass to the container.
+        // The key is the environment variable name and the value is the value of the environment variable.
+        S3_BUCKET_NAME: s3Bucket.bucketName,
+        S3_OBJECT_KEY: "",
+      },
+    });
   }
 }

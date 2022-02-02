@@ -109,5 +109,10 @@ export class EventBridgeEtlStack extends Stack {
         memoryLimitMiB: 512, // The amount (in MiB) of memory to reserve for the container
       }
     );
+
+    // ========================================================================
+    // Adds a policy statement to the task IAM role.
+    // ========================================================================
+    ecsTaskDefinition.addToTaskRolePolicy(eventBridgeIamPolicyStatement);
   }
 }

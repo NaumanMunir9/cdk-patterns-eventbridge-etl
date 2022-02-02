@@ -58,5 +58,15 @@ export class EventBridgeEtlStack extends Stack {
       s3.EventType.OBJECT_CREATED, // Amazon S3 APIs such as PUT, POST, and COPY can create an object. Using these event types, you can enable notification when an object is created using a specific API, or you can use the s3:ObjectCreated:* event type to request notification regardless of the API that was used to create an object.
       new s3Notifications.SqsDestination(sqsQueue) // Use an SQS queue as a bucket notification destination
     );
+
+    // ========================================================================
+    // Represents a statement in an IAM policy document
+    // eventBridge IAM PutEvents policyStatement
+    // ========================================================================
+    const eventBridgeIamPolicyStatement = new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      actions: ["events:PutEvents"],
+      resources: ["*"],
+    });
   }
 }

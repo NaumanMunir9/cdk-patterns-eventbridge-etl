@@ -38,5 +38,13 @@ export class EventBridgeEtlStack extends Stack {
     // An S3 bucket with associated policy objects
     // ========================================================================
     const s3Bucket = new s3.Bucket(this, "S3Bucket");
+
+    // ========================================================================
+    // A new Amazon SQS queue
+    // ========================================================================
+    const sqsQueue = new sqs.Queue(this, "SqsQueueS3Bucket", {
+      queueName: "eventbridge-etl-queue",
+      visibilityTimeout: cdk.Duration.seconds(300),
+    });
   }
 }

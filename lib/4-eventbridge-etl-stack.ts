@@ -306,5 +306,20 @@ export class EventBridgeEtlStack extends Stack {
       reservedConcurrentExecutions: LAMBDA_THROTTLE_SIZE, // The number of simultaneous executions of your function that can be run without the function consuming the reserved concurrent execution units.
       timeout: cdk.Duration.seconds(3), // The function execution time (in seconds) after which Lambda terminates it.
     });
+
+    // ========================================================================
+    // Defines an EventBridge Rule in this stack.
+    // ========================================================================
+    const observeLambdaEventBridgeRule = new events.Rule(
+      this,
+      "ObserveLambdaEventBridgeRule",
+      {
+        description: "All events are caught here, needs to be logged centrally",
+        eventPattern: {
+          // Describes which events EventBridge routes to the specified target. These routed events are matched events
+          source: ["eventBridge-etl"],
+        },
+      }
+    );
   }
 }

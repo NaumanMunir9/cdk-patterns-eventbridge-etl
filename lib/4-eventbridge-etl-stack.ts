@@ -217,5 +217,24 @@ export class EventBridgeEtlStack extends Stack {
     // Adds a statement to the IAM role assumed by the instance
     // ========================================================================
     transformLambda.addToRolePolicy(eventBridgeIamPolicyStatement);
+
+    // ========================================================================
+    // Defines an EventBridge Rule in this stack
+    // ========================================================================
+    const transformEventBridgeRule = new events.Rule(
+      this,
+      "TransformEventBridgeRule",
+      {
+        description: "Data Extracted from S3, needs transformation",
+        eventPattern: {
+          // Describes which events EventBridge routes to the specified target. These routed events are matched events
+          source: ["eventBridge-etl"],
+          detailType: ["s3RecordExtraction"],
+          detail: {
+            status: ["extracted"],
+          },
+        },
+      }
+    );
   }
 }

@@ -195,5 +195,15 @@ export class EventBridgeEtlStack extends Stack {
         ecsTaskDefinition.obtainExecutionRole().roleArn,
         ecsTaskDefinition.taskRole.roleArn,
       ],
+    });
+
+    // ========================================================================
+    // Adds a statement to the IAM role assumed by the instance
+    // ========================================================================
+    extractLambda.addToRolePolicy(taskExecutionRolePolicyStatement);
+
+    // ========================================================================
+    // Adds a statement to the IAM role assumed by the instance
+    // ========================================================================
   }
 }

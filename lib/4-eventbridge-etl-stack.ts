@@ -268,5 +268,24 @@ export class EventBridgeEtlStack extends Stack {
     // Permits an IAM principal to all data read/write operations to this table. BatchGetItem, GetRecords, GetShardIterator, Query, GetItem, Scan, BatchWriteItem, PutItem, UpdateItem, DeleteItem
     // ========================================================================
     dynamodbTable.grantReadWriteData(loadLambda);
+
+    // ========================================================================
+    // Defines an EventBridge Rule in this stack
+    // ========================================================================
+    const loadFunctionEventBridgeRule = new events.Rule(
+      this,
+      "LoadFunctionEventBridgeRule",
+      {
+        description: "Data transformed, needs loading to DynamoDB",
+        eventPattern: {
+          // Describes which events EventBridge routes to the specified target. These routed events are matched events
+          source: ["eventBridge-etl"],
+          detailType: ["transform"],
+          detail: {
+            status: ["transformed"],
+          },
+        },
+      }
+    );
   }
 }

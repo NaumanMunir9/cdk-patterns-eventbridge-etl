@@ -152,5 +152,15 @@ export class EventBridgeEtlStack extends Stack {
         CONTAINER_NAME: container.containerName,
       },
     });
-  }
+
+    // ========================================================================
+    // grantConsumerMessage
+    // ========================================================================
+    sqsQueue.grantConsumeMessages(extractLambda);
+
+    // ========================================================================
+    // Adds a new event source mapping to the Lambda function
+    // Adds an event source to this function
+    // ========================================================================
+    extractLambda.addEventSource(new lambdaEventSources.SqsEventSource(sqsQueue)); // Use an Amazon SQS queue as an event source for AWS Lambda.
 }
